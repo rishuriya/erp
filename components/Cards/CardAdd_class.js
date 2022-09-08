@@ -2,9 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 // components
+import Modal from "components/Modal/ModalClass.js"
 import TableDropdown from "components/Dropdowns/TableDropdown.js";
+import Firebase from "../../pages/firebase.js"
 
-export default function CardTable({ color }) {
+export default function CardAdd_class({ color }) {
   return (
     <>
       <div
@@ -16,7 +18,10 @@ export default function CardTable({ color }) {
         <div className="rounded-t mb-0 px-4 py-3 border-0">
         <div className="rounded-t mb-0 px-6 py-6">
           <div className="text-center flex w-full justify-between">
-            <h6 className="text-xl font-bold">Total Fee Head</h6>            
+            <h6 className="text-xl font-bold">Total Fee Head</h6>
+            
+            <Modal/>
+            
           </div>
         </div>
         </div>
@@ -412,10 +417,10 @@ export default function CardTable({ color }) {
   );
 }
 
-CardTable.defaultProps = {
+CardAdd_class.defaultProps = {
   color: "light",
 };
 
-CardTable.propTypes = {
+CardAdd_class.propTypes = {
   color: PropTypes.oneOf(["light", "dark"]),
 };

@@ -1,11 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
+import { Button, Card, Collapse } from "reactstrap";
 import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const [collapseSh, setCollapseSh] = React.useState("hidden");
   const router = useRouter();
   return (
     <>
@@ -89,12 +90,12 @@ export default function Sidebar() {
 
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="items-center">
-              <Link href="/admin/dashboard">
+              <Link href="/">
                   <a onClick={() => setCollapseShow()}
                     href="#pablo"
                     className={
                       "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/dashboard") !== -1
+                      (router.pathname.indexOf("/") == 1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
                         : "text-blueGray-700 hover:text-blueGray-500")
                     }
@@ -102,7 +103,7 @@ export default function Sidebar() {
                     <i
                       className={
                         "fas fa-tv mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/dashboard") !== -1
+                        (router.pathname.indexOf("/") == 1
                           ? "opacity-75"
                           : "text-blueGray-300")
                       }
@@ -113,12 +114,67 @@ export default function Sidebar() {
               </li>
 
               <li className="items-center">
-                <Link href="/admin/settings">
+                <Button type="button" onClick={() => {collapseSh === 'bg-white m-2 py-3 px-6' ? 
+   setCollapseSh('hidden') : 
+   setCollapseSh('bg-white m-2 py-3 px-6')
+                }}
+          >
                   <a
                     href="#pablo" datatarget="#md1"
                     className={
                       "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/settings") !== -1
+                      (router.pathname.indexOf("/admin/student") !== -1
+                        ? "text-lightBlue-500 hover:text-lightBlue-600"
+                        : "text-blueGray-700 hover:text-blueGray-500")
+                    }
+                  >
+                    <i
+                      className={
+                        "fas fa-user mr-2 text-sm " +
+                        (router.pathname.indexOf("/admin/student") !== -1
+                          ? "opacity-75"
+                          : "text-blueGray-300")
+                      }
+                    ></i>{" "}
+                    Student
+                  </a>
+                </Button>
+                <Collapse className={collapseSh}>
+                <ul className="md:flex-col md:min-w-full flex flex-col list-none">
+                <li className="items-center">
+                <Link href="/admin/student">
+                  <a
+                    href="#pablo" datatarget="#md1"
+                    className={
+                      "text-xs uppercase py-3 font-bold block " +
+                      (router.pathname.indexOf("/admin/student") !== -1
+                        ? "text-lightBlue-500 hover:text-lightBlue-600"
+                        : "text-blueGray-700 hover:text-blueGray-500")
+                    }
+                  >
+                    <i
+                      className={
+                        "fas fa-add mr-2 text-sm " +
+                        (router.pathname.indexOf("/admin/student") !== -1
+                          ? "opacity-75"
+                          : "text-blueGray-300")
+                      }
+                    ></i>{" "}
+                    Add Student
+                  </a>
+                </Link>
+              </li>
+</ul>
+      </Collapse>
+              </li>
+
+              <li className="items-center">
+                <Link href="/admin/posting">
+                  <a
+                    href="#pablo" datatarget="#md1"
+                    className={
+                      "text-xs uppercase py-3 font-bold block " +
+                      (router.pathname.indexOf("/admin/posting") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
                         : "text-blueGray-700 hover:text-blueGray-500")
                     }
@@ -126,12 +182,12 @@ export default function Sidebar() {
                     <i
                       className={
                         "fas fa-tools mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/settings") !== -1
+                        (router.pathname.indexOf("/admin/posting") !== -1
                           ? "opacity-75"
                           : "text-blueGray-300")
                       }
                     ></i>{" "}
-                    Settings
+                    Fee Posting
                   </a>
                 </Link>
               </li>
@@ -189,31 +245,31 @@ export default function Sidebar() {
             <hr className="my-4 md:min-w-full" />
             {/* Heading */}
             <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Auth Layout Pages
+              Admin
             </h6>
             {/* Navigation */}
 
             <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
               <li className="items-center">
-                <Link href="/auth/login">
+                <Link href="/admin/fee_head">
                   <a
                     href="#pablo"
                     className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
                   >
-                    <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
-                    Login
+                    <i className="fas fa-money-bill text-blueGray-400 mr-2 text-sm"></i>{" "}
+                    Fee Head
                   </a>
                 </Link>
               </li>
 
               <li className="items-center">
-                <Link href="/auth/register">
+                <Link href="/admin/add_class">
                   <a
                     href="#pablo"
                     className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
                   >
                     <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
-                    Register
+                    Add Class
                   </a>
                 </Link>
               </li>
