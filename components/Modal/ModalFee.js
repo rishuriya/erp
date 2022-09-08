@@ -1,7 +1,38 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { app, database, } from "../../pages/firebase.js";
+import { collection, query, where, getDocs,addDoc,doc,setDoc } from 'firebase/firestore';
 
 const Modal = () => {
   const [showModal, setShowModal] = useState(false);
+  const [fireData, setFireData] = useState([]);
+  const q = collection(database, "Session","2022","class");
+  useEffect(() => {
+      getData()
+  }, [])
+
+  const getData = async () => {
+    await getDocs(q)
+      .then((response) => {
+        setFireData(response.docs.map((data) => {
+          return { ...data.data(), id: data.id }
+        }))
+      })
+  }
+  const saveNote = async () => {
+    await setDoc(doc(database,"Session",year.toString(),"class",Class), {
+        Class:Class,
+        Total_Section:Section
+    }).then(()=>
+    {
+      alert("data sent")
+      setClass(null)
+  setSection(null)
+  setShowModal(false)
+  router.push('/admin/add_class')
+    }).catch((err)=>{
+      alert(err);
+    })
+  }
   return (
     <>
       <button
@@ -68,12 +99,12 @@ const Modal = () => {
                 <label for="Period" className="block uppercase text-blueGray-600 text-xs font-bold mb-2">Choose Class:</label>
 
                   <select id="Class" name="Class" size="4" multiple className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-  <option value="monthly">Monthly</option>
-  <option value="periodic">Periodic</option>
-  <option value="biannual">Biannual</option>
-  <option value="annual">Annual</option>
-  <option value="late">Late</option>
-</select>
+                  {fireData.map((data) => {
+                    return (
+                    <option value={data.Class}>{data.Class}</option>
+                            )
+                  })}
+                  </select>
                 </div>
               </div>
               <div className="w-full lg:w-6/12 px-4">

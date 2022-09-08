@@ -1,7 +1,30 @@
 import React, { useState } from "react";
-
+import { app, database, } from "../../pages/firebase.js";
+import { collection, addDoc,doc,setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 const Modal = () => {
+  let date_ob = new Date();
+  let year = date_ob.getFullYear();
   const [showModal, setShowModal] = useState(false);
+  const [Class,setClass]=useState(null);
+  const [Section,setSection]=useState(null);
+  let router = useRouter()
+  //const dbInstance=doc(database,"Session",year,"student",year+Class);
+const saveNote = async () => {
+  await setDoc(doc(database,"Session",year.toString(),"class",Class), {
+      Class:Class,
+      Total_Section:Section
+  }).then(()=>
+  {
+    alert("data sent")
+    setClass(null)
+setSection(null)
+setShowModal(false)
+router.push('/admin/add_class')
+  }).catch((err)=>{
+    alert(err);
+  })
+}
   return (
     <>
       <button
@@ -44,7 +67,7 @@ const Modal = () => {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    defaultValue="lucky.jesse" 
+                    defaultValue="" onChange={event => setClass(event.target.value)} value={Class}
                   />
                 </div>
               </div>
@@ -59,7 +82,7 @@ const Modal = () => {
                   <input
                     type="integer"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    defaultValue="jesse@example.com"
+                    defaultValue="" onChange={event => setSection(event.target.value)} value={Section}
                   />
                 </div>
               </div>
@@ -77,7 +100,7 @@ const Modal = () => {
                   <button
                     className="text-white bg-yellow-500 active:bg-yellow-700 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={saveNote}
                   >
                     Submit
                   </button>
