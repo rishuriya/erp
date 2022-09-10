@@ -11,19 +11,19 @@ const Modal = () => {
   let router = useRouter()
   //const dbInstance=doc(database,"Session",year,"student",year+Class);
 const saveNote = async () => {
+  
+  await setDoc(doc(database,"Session",year.toString(),"Fee",Class), {
+    Class:Class,
+})
   await setDoc(doc(database,"Session",year.toString(),"class",Class), {
-      Class:Class,
-      Total_Section:Section
-  }).then(()=>
-  {
-    alert("data sent")
+  Class:Class,
+  Total_Section:Section
+})
     setClass(null)
 setSection(null)
 setShowModal(false)
 router.push('/admin/add_class')
-  }).catch((err)=>{
-    alert(err);
-  })
+
 }
   return (
     <>

@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { app, database, } from "../../pages/firebase.js";
-import { collection, query, where, getDocs,addDoc,doc,setDoc } from 'firebase/firestore';
+import { collection, query, where,updateDoc, getDocs,addDoc,doc,setDoc } from 'firebase/firestore';
 
 const Modal = () => {
+  let date_ob = new Date();
+  let year = date_ob.getFullYear();
   const [showModal, setShowModal] = useState(false);
+  const [headName,setheadName]=useState('');
+  const [headAmount,setheadAmount]=useState("");
+  const [classData,setclassData]=useState();
+  const [feePeriod,setfeePeriod]=useState('');
   const [fireData, setFireData] = useState([]);
   const q = collection(database, "Session","2022","class");
   useEffect(() => {
@@ -18,21 +24,29 @@ const Modal = () => {
         }))
       })
   }
-  const saveNote = async () => {
-    await setDoc(doc(database,"Session",year.toString(),"class",Class), {
-        Class:Class,
-        Total_Section:Section
-    }).then(()=>
-    {
-      alert("data sent")
-      setClass(null)
-  setSection(null)
-  setShowModal(false)
-  router.push('/admin/add_class')
-    }).catch((err)=>{
-      alert(err);
-    })
+  const saveNote = async (e) => {
+    e.preventDefault()
+    classData = [...classRef.current.options]
+                .filter(option => option.selected)
+                .map(option => option.value)
+    for (let index = 0; index < classData.length; index++) {
+    let  type=headName+"_period"
+    
+    await updateDoc(doc(database,"Session",year.toString(),"Fee",classData[index]), {
+      Class:classData[index],
+      [headName]:headAmount,
+      [type]:feePeriod
+  })}
+    //alert("data sent")
+    setclassData(null)
+setheadName("")
+setfeePeriod("")
+setheadAmount("")
+setShowModal(false)
   }
+
+  const classRef = useRef()
+
   return (
     <>
       <button
@@ -75,7 +89,7 @@ const Modal = () => {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    defaultValue="lucky.jesse" 
+                    defaultValue="lucky.jesse" onChange={event => setheadName(event.target.value)} value={headName}
                   />
                 </div>
               </div>
@@ -90,7 +104,7 @@ const Modal = () => {
                   <input
                     type="integer"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    defaultValue="jesse@example.com"
+                    defaultValue="0" onChange={event => setheadAmount(event.target.value)} value={headAmount}
                   />
                 </div>
               </div>
@@ -98,7 +112,8 @@ const Modal = () => {
                 <div className="relative w-full mb-3">
                 <label for="Period" className="block uppercase text-blueGray-600 text-xs font-bold mb-2">Choose Class:</label>
 
-                  <select id="Class" name="Class" size="4" multiple className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
+                  <select id="Class" name="Class" size="4" multiple 
+                ref={classRef} className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
                   {fireData.map((data) => {
                     return (
                     <option value={data.Class}>{data.Class}</option>
@@ -111,13 +126,14 @@ const Modal = () => {
                 <div className="relative w-full mb-3">
                 <label for="Period" className="block uppercase text-blueGray-600 text-xs font-bold mb-2">Choose Period:</label>
 
-                  <select id="Period" name="Period" size="4" className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-  <option value="monthly">Monthly</option>
-  <option value="periodic">Periodic</option>
-  <option value="biannual">Biannual</option>
-  <option value="annual">Annual</option>
-  <option value="late">Late</option>
-</select>
+                  <select id="Period" name="Period" size="4"
+                   onChange={event => setfeePeriod(event.target.value)} value={feePeriod} className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
+                    <option value="monthly">Monthly</option>
+                    <option value="periodic">Periodic</option>
+                    <option value="biannual">Biannual</option>
+                    <option value="annual">Annual</option>
+                    <option value="late">Late</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -134,7 +150,7 @@ const Modal = () => {
                   <button
                     className="text-white bg-yellow-500 active:bg-yellow-700 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={saveNote}
                   >
                     Submit
                   </button>
