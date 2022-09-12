@@ -22,8 +22,8 @@ const Modal = () => {
         setFireData(response.docs.map((data) => {
           return { ...data.data(), id: data.id }
         }))
-      })
-  }
+      });
+    }
   const saveNote = async (e) => {
     e.preventDefault()
     classData = [...classRef.current.options]
