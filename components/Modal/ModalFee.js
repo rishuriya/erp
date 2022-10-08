@@ -9,7 +9,7 @@ const Modal = () => {
   const [headName,setheadName]=useState('');
   const [headAmount,setheadAmount]=useState("");
   const [classData,setclassData]=useState();
-  const [feePeriod,setfeePeriod]=useState('');
+  const [feePeriod,setfeePeriod]=useState();
   const [fireData, setFireData] = useState([]);
   const q = collection(database, "Session","2022","class");
   useEffect(() => {
@@ -29,19 +29,32 @@ const Modal = () => {
     classData = [...classRef.current.options]
                 .filter(option => option.selected)
                 .map(option => option.value)
+
+    headAmount=parseInt(headAmount)
     for (let index = 0; index < classData.length; index++) {
     //let  type=headName+"_period"
     
     await setDoc(doc(database,"Session",year.toString(),"Fee",classData[index],"Fee",headName), {
-      Class:classData[index],
+      Class_name:classData[index],
       Name:headName,
       Amount:headAmount,
       Period:feePeriod
   })
-  let total_amt=0
-  await updateDoc(doc(database,"Session",year.toString(),"Fee",classData[index]), {
-    Total_amt:total_amt
-})
+  const docRef = doc(database, "Session","2022","Fee",classData[index])
+  const docSnap = await getDoc(docRef);
+  let total_amt;
+  total_amt=parseInt(total_amt)
+  if (docSnap.exists()) {
+    total_amt=docSnap.data()["Total_amt"]
+    console.log(total_amt)
+    } else {
+// doc.data() will be undefined in this case
+      console.log("No such document!");
+      }
+      total_amt=total_amt+headAmount
+      await updateDoc(doc(database,"Session",year.toString(),"Fee",classData[index]), {
+        Total_amt:total_amt
+    })
     }
     //alert("data sent")
     setclassData(null)

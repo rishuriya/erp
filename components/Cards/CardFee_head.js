@@ -1,63 +1,31 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { app, database, } from "../../pages/firebase.js";
-import { collection, query, where, getDocs,addDoc,doc,getDoc } from 'firebase/firestore';
+import { collection, query, collectionGroup, getDocs,addDoc,doc,setDoc, orderBy, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 // components
 import Modal from "components/Modal/ModalFee.js"
 import TableDropdown from "components/Dropdowns/TableDropdown.js";
 
-export default function CardTable({ color }) {
+export default function CardFee_head({ color }){
   const [fireData, setFireData] = useState([]);
-  const [feeData,setFeeData]=useState([]);
-  const q_class = collection(database, "Session","2022","class");
-  const q_Fee = collection(database, "Session","2022","Fee");
-  let newArr=[];
-  let final=[];
+  const q = collectionGroup(database, "Fee");
   let router = useRouter()
   useEffect(() => {
       getData()
   }, [])
 
   const getData = async () => {
-    await getDocs(q_class)
+    const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+    console.log(doc.id, ' => ', doc.data());
+});
+    await getDocs(q)
       .then((response) => {
         setFireData(response.docs.map((data) => {
           return { ...data.data(), id: data.id }
         }))
-      });
-
-    for (let index = 0; index < fireData.length; index++) {
-      
-    const docRef = doc(database, "Session","2022","Fee",fireData[index].Class)
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      let arr=Object.keys(docSnap.data())
-      for (let i = 0; i < arr.length; i++) {
-        
-        if(arr[i]!="Class" && arr[i].search("_period")==-1){
-          //console.log(arr[i]);
-      newArr.push(arr[i])
-        }
-      }
-      
-        //console.log("Document data:",Object.keys(docSnap.data()));
-      } else {
-  // doc.data() will be undefined in this case
-        console.log("No such document!");
-        }
-        
-      } 
-      await getDocs(q_Fee)
-.then((response) => {
-setFeeData(response.docs.map((data) => {
-return { ...data.data(), id: data.id }
-}))
-});
-//console.log(feeData);
-final=newArr.map((data,i)=>[data,feeData]);
- 
+      })
   }
 
   return (
@@ -71,7 +39,7 @@ final=newArr.map((data,i)=>[data,feeData]);
         <div className="rounded-t mb-0 px-4 py-3 border-0">
         <div className="rounded-t mb-0 px-6 py-6">
           <div className="text-center flex w-full justify-between">
-            <h6 className="text-xl font-bold">Total Class</h6>
+            <h6 className="text-xl font-bold">Fee HeadName</h6>
             
             <Modal/>
             
@@ -144,8 +112,9 @@ final=newArr.map((data,i)=>[data,feeData]);
               </tr>
             </thead>
             <tbody>
-            {feeData.map((data) => {
-return(
+            {fireData.map((data) => {
+              console.log(data)
+            return (
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -159,38 +128,17 @@ return(
                       +(color === "light" ? "text-blueGray-600" : "text-white")
                     }
                   >
-                    {data.Object}
+                    {data.Name}
                   </span>
                 </th>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                {}
+                {data.Class_name}
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <i className="fas fa-circle text-orange-500 mr-2"></i> pending
+                {data.Amount}
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <div className="flex">
-                    <img
-                      src="/img/team-1-800x800.jpg"
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src="/img/team-2-800x800.jpg"
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src="/img/team-3-800x800.jpg"
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src="/img/team-4-470x470.png"
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                  </div>
+                {data.Period}
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex items-center">
@@ -218,10 +166,11 @@ return(
     </>
   );
 }
-CardTable.defaultProps = {
+
+CardFee_head.defaultProps = {
   color: "light",
 };
 
-CardTable.propTypes = {
+CardFee_head.propTypes = {
   color: PropTypes.oneOf(["light", "dark"]),
 };

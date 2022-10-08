@@ -6,16 +6,22 @@ const Modal = () => {
   let date_ob = new Date();
   let year = date_ob.getFullYear();
   const [showModal, setShowModal] = useState(false);
-  const [Class,setClass]=useState(null);
+  const [Class,setClass]=useState("");
   const [Section,setSection]=useState(null);
   let router = useRouter()
   //const dbInstance=doc(database,"Session",year,"student",year+Class);
 const saveNote = async () => {
-  
+  let Class_int=parseInt(Class)
+  Section=parseInt(Section)
+  await setDoc(doc(database,"Session",year.toString(),"Fee",Class), {
+    Total_amt:0,
+    Class:Class_int
+})
   await setDoc(doc(database,"Session",year.toString(),"class",Class), {
-  Class:Class,
+  Class:Class_int,
   Total_Section:Section
 })
+console.log("true")
     setClass(null)
 setSection(null)
 setShowModal(false)
