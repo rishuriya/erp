@@ -12,9 +12,6 @@ const Modal = () => {
   //const dbInstance=doc(database,"Session",year,"student",year+Class);
 const saveNote = async () => {
   
-  await setDoc(doc(database,"Session",year.toString(),"Fee",Class), {
-    Class:Class,
-})
   await setDoc(doc(database,"Session",year.toString(),"class",Class), {
   Class:Class,
   Total_Section:Section

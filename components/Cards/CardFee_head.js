@@ -9,15 +9,18 @@ import TableDropdown from "components/Dropdowns/TableDropdown.js";
 
 export default function CardTable({ color }) {
   const [fireData, setFireData] = useState([]);
-  const q = collection(database, "Session","2022","class");
+  const [feeData,setFeeData]=useState([]);
+  const q_class = collection(database, "Session","2022","class");
+  const q_Fee = collection(database, "Session","2022","Fee");
   let newArr=[];
+  let final=[];
   let router = useRouter()
   useEffect(() => {
       getData()
   }, [])
 
   const getData = async () => {
-    await getDocs(q)
+    await getDocs(q_class)
       .then((response) => {
         setFireData(response.docs.map((data) => {
           return { ...data.data(), id: data.id }
@@ -26,7 +29,7 @@ export default function CardTable({ color }) {
 
     for (let index = 0; index < fireData.length; index++) {
       
-      const docRef = doc(database, "Session","2022","Fee",fireData[index].Class)
+    const docRef = doc(database, "Session","2022","Fee",fireData[index].Class)
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -46,7 +49,15 @@ export default function CardTable({ color }) {
         }
         
       } 
-      console.log(newArr);    
+      await getDocs(q_Fee)
+.then((response) => {
+setFeeData(response.docs.map((data) => {
+return { ...data.data(), id: data.id }
+}))
+});
+//console.log(feeData);
+final=newArr.map((data,i)=>[data,feeData]);
+ 
   }
 
   return (
@@ -133,9 +144,8 @@ export default function CardTable({ color }) {
               </tr>
             </thead>
             <tbody>
-            {fireData.map((data) => {
-              //console.log(data.Class)
-            return (
+            {feeData.map((data) => {
+return(
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -149,11 +159,11 @@ export default function CardTable({ color }) {
                       +(color === "light" ? "text-blueGray-600" : "text-white")
                     }
                   >
-                    {data.Class}
+                    {data.Object}
                   </span>
                 </th>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                {data.Total_Section}
+                {}
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <i className="fas fa-circle text-orange-500 mr-2"></i> pending

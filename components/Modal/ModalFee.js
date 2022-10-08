@@ -1,6 +1,6 @@
 import { useEffect, useState,useRef } from "react";
 import { app, database, } from "../../pages/firebase.js";
-import { collection, query, where,updateDoc, getDocs,addDoc,doc,setDoc } from 'firebase/firestore';
+import { collection, query, where,updateDoc, getDocs,addDoc,doc,setDoc, getDoc } from 'firebase/firestore';
 
 const Modal = () => {
   let date_ob = new Date();
@@ -30,13 +30,25 @@ const Modal = () => {
                 .filter(option => option.selected)
                 .map(option => option.value)
     for (let index = 0; index < classData.length; index++) {
-    let  type=headName+"_period"
+    //let  type=headName+"_period"
     
-    await updateDoc(doc(database,"Session",year.toString(),"Fee",classData[index]), {
+    await setDoc(doc(database,"Session",year.toString(),"Fee",classData[index],"Fee",headName), {
       Class:classData[index],
-      [headName]:headAmount,
-      [type]:feePeriod
-  })}
+      Name:headName,
+      Amount:headAmount,
+      Period:feePeriod
+  })
+  const docRef = doc(database, "Session","2022","Fee",classData[index])
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    let total_amt;
+      console.log("Document data:",docSnap.data());
+    } else {
+// doc.data() will be undefined in this case
+      console.log("No such document!");
+      }
+    }
     //alert("data sent")
     setclassData(null)
 setheadName("")
