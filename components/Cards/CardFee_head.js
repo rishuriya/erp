@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { app, database, } from "../../pages/firebase.js";
-import { collection, query, collectionGroup, getDocs,addDoc,doc,setDoc, orderBy, where } from 'firebase/firestore';
+import { collection, query, collectionGroup, getDocs} from 'firebase/firestore';
 import { useRouter } from 'next/router';
 // components
 import Modal from "components/Modal/ModalFee.js"
@@ -9,7 +9,7 @@ import TableDropdown from "components/Dropdowns/TableDropdown.js";
 
 export default function CardFee_head({ color }){
   const [fireData, setFireData] = useState([]);
-  const q = collectionGroup(database, "Fee");
+  const q = query(collectionGroup(database,"Fee"));
   let router = useRouter()
   useEffect(() => {
       getData()
@@ -18,11 +18,13 @@ export default function CardFee_head({ color }){
   const getData = async () => {
     const querySnapshot = await getDocs(q);
 querySnapshot.forEach((doc) => {
-    console.log(doc.id, ' => ', doc.data());
+    //console.log(doc.id, ' => ', doc.data());
 });
     await getDocs(q)
       .then((response) => {
-        setFireData(response.docs.map((data) => {
+        setFireData(response.docs.filter((data)=>{
+          return data.data()["Name"]!=null;
+        }).map((data)=> {
           return { ...data.data(), id: data.id }
         }))
       })
@@ -113,7 +115,7 @@ querySnapshot.forEach((doc) => {
             </thead>
             <tbody>
             {fireData.map((data) => {
-              console.log(data)
+              //console.log(data)
             return (
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
