@@ -38,16 +38,10 @@ const Modal = () => {
       Amount:headAmount,
       Period:feePeriod
   })
-  const docRef = doc(database, "Session","2022","Fee",classData[index])
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    let total_amt;
-      console.log("Document data:",docSnap.data());
-    } else {
-// doc.data() will be undefined in this case
-      console.log("No such document!");
-      }
+  let total_amt=0
+  await updateDoc(doc(database,"Session",year.toString(),"Fee",classData[index]), {
+    Total_amt:total_amt
+})
     }
     //alert("data sent")
     setclassData(null)
