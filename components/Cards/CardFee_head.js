@@ -16,10 +16,6 @@ export default function CardFee_head({ color }){
   }, [])
 
   const getData = async () => {
-    const querySnapshot = await getDocs(q);
-querySnapshot.forEach((doc) => {
-    //console.log(doc.id, ' => ', doc.data());
-});
     await getDocs(q)
       .then((response) => {
         setFireData(response.docs.filter((data)=>{

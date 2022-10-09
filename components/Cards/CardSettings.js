@@ -36,7 +36,7 @@ const id = Math.floor(randomNumber)
       About:About
   }).then(()=>
   {
-    alert("data sent")
+    //alert("data sent")
     setClass('')
 setFirstName('')
 setLastName('')
